@@ -279,8 +279,8 @@ static gboolean gvir_sandbox_builder_construct_basic(GVirSandboxBuilder *builder
 {
     gvir_config_domain_set_name(domain,
                                 gvir_sandbox_config_get_name(config));
-    /* XXX configurable */
-    gvir_config_domain_set_memory(domain, 1024*512);
+    gvir_config_domain_set_memory(domain,
+                                gvir_sandbox_config_get_memory(config));
     return TRUE;
 }
 

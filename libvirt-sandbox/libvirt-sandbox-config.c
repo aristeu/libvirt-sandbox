@@ -55,6 +55,8 @@ struct _GVirSandboxConfigPrivate
     gchar *username;
     gchar *homedir;
 
+    gulong memory;
+
     GList *networks;
     GList *hostBindMounts;
     GList *guestBindMounts;
@@ -81,6 +83,8 @@ enum {
     PROP_GID,
     PROP_USERNAME,
     PROP_HOMEDIR,
+
+    PROP_MEMORY,
 
     PROP_SECURITY_LABEL,
     PROP_SECURITY_DYNAMIC,
@@ -155,6 +159,10 @@ static void gvir_sandbox_config_get_property(GObject *object,
         g_value_set_string(value, priv->homedir);
         break;
 
+    case PROP_MEMORY:
+        g_value_set_ulong(value, priv->memory);
+        break;
+
     case PROP_SECURITY_LABEL:
         g_value_set_string(value, priv->secLabel);
         break;
@@ -223,6 +231,10 @@ static void gvir_sandbox_config_set_property(GObject *object,
     case PROP_HOMEDIR:
         g_free(priv->homedir);
         priv->homedir = g_value_dup_string(value);
+        break;
+
+    case PROP_MEMORY:
+        priv->memory = g_value_get_ulong(value);
         break;
 
     case PROP_SECURITY_LABEL:
@@ -392,6 +404,20 @@ static void gvir_sandbox_config_class_init(GVirSandboxConfigClass *klass)
                                                         g_get_home_dir(),
                                                         G_PARAM_READABLE |
                                                         G_PARAM_WRITABLE |
+                                                        G_PARAM_STATIC_NAME |
+                                                        G_PARAM_STATIC_NICK |
+                                                        G_PARAM_STATIC_BLURB));
+    g_object_class_install_property(object_class,
+                                    PROP_MEMORY,
+                                    g_param_spec_ulong("memory",
+                                                        "Memory",
+                                                        "Max amount of memory used",
+                                                        0,
+							G_MAXULONG,
+							0,		/* unlimited */
+                                                        G_PARAM_READABLE |
+                                                        G_PARAM_WRITABLE |
+                                                        G_PARAM_CONSTRUCT_ONLY |
                                                         G_PARAM_STATIC_NAME |
                                                         G_PARAM_STATIC_NICK |
                                                         G_PARAM_STATIC_BLURB));
@@ -1353,6 +1379,20 @@ cleanup:
         g_object_unref(dis);
     g_object_unref(file);
     return ret;
+}
+
+/**
+ * gvir_sandbox_config_get_memory:
+ * @config: (transfer none): the sandbox config
+ *
+ * Retrieves the sandbox maximum available memory
+ *
+ * Returns: (transfer none): the current maximum available memory
+ */
+gulong gvir_sandbox_config_get_memory(GVirSandboxConfig *config)
+{
+    GVirSandboxConfigPrivate *priv = config->priv;
+    return priv->memory;
 }
 
 /**

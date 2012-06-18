@@ -142,6 +142,8 @@ gboolean gvir_sandbox_config_add_host_include_file(GVirSandboxConfig *config,
                                                    gchar *includefile,
                                                    GError **error);
 
+gulong gvir_sandbox_config_get_memory(GVirSandboxConfig *config);
+
 void gvir_sandbox_config_set_security_label(GVirSandboxConfig *config, const gchar *label);
 const gchar *gvir_sandbox_config_get_security_label(GVirSandboxConfig *config);
 void gvir_sandbox_config_set_security_dynamic(GVirSandboxConfig *config, gboolean dynamic);
